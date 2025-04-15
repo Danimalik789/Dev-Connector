@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logoutUser } from "../../actions/authActions";
+import { clearCurrentProfile } from "../../actions/profileActions";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -12,12 +13,13 @@ const Navbar = () => {
 
   const onLogoutClick = (e) => {
     e.preventDefault();
+    dispatch(clearCurrentProfile());  
     dispatch(logoutUser());
     navigate("/login");
   };
 
   const authLinks = (
-    <ul className="navbar-nav ml-auto">
+    <ul className="navbar-nav ml-auto ms-auto">
       <li className="nav-item">
         <a href="/" onClick={onLogoutClick} className="nav-link">
           <img
@@ -34,13 +36,13 @@ const Navbar = () => {
   );
 
   const guestLinks = (
-    <ul className="navbar-nav ml-auto">
+    <ul className="navbar-nav ml-auto ms-auto">
       <li className="nav-item">
         <Link className="nav-link" to="/register">
           Sign Up
         </Link>
       </li>
-      <li className="nav-item">
+      <li className="nav-item ">
         <Link className="nav-link" to="/login">
           Login
         </Link>
