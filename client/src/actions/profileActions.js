@@ -1,5 +1,4 @@
 import axios from "axios";
-
 import { GET_PROFILE, PROFILE_LOADING, GET_ERRORS, CLEAR_CURRENT_PROFILE, SET_CURRENT_USER } from "./types";
 
 
@@ -42,8 +41,29 @@ export const deleteAccount = () => dispatch => {
         }))
     }
 }
-// Profile loading
+//Add Experience
+export const addExperience = (expData, navigate) => dispatch => {
+    axios.post('/api/profile/experience', expData)
+    .then(res => navigate('/dashboard'))
+    .catch(err => dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+    }))
+}
 
+
+//Add Education
+export const addEducation = (eduData, navigate) => dispatch => {
+    axios.post('/api/profile/education', eduData)
+    .then(res => navigate('/dashboard'))
+    .catch(err => dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+    }))
+}
+
+
+// Profile loading
 export const setProfileLoading = () => {
     return{
         type: PROFILE_LOADING

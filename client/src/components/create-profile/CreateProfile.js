@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { createProfile, getCurrentProfile } from "../../../actions/profileActions";
+import { createProfile } from "../../actions/profileActions";
 
-import TextFieldGroup from "../../common/TextFieldGroup";
-import TextAreaFieldGroup from "../../common/TextAreaFieldGroup";
-import InputGroup from "../../common/InputGroup";
-import SelectListGroup from "../../common/SelectListGroup";
+import TextFieldGroup from "../common/TextFieldGroup";
+import TextAreaFieldGroup from "../common/TextAreaFieldGroup";
+import InputGroup from "../common/InputGroup";
+import SelectListGroup from "../common/SelectListGroup";
 
-const EditProfile = () => {
+const CreateProfile = () => {
   const [formData, setFormData] = useState({
     displaySocialInputs: false,
     handle: "",
@@ -39,10 +39,6 @@ const EditProfile = () => {
       setErrors(reduxErrors);
     }
   }, [reduxErrors]);
-
-  useEffect(() => {
-    dispatch(getCurrentProfile())
-  }, [dispatch])
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -128,7 +124,10 @@ const EditProfile = () => {
       <div className="container">
         <div className="row">
           <div className="col-md-8 m-auto">
-            <h1 className="display-4 text-center">Edit Profile</h1>
+            <h1 className="display-4 text-center">Create Your Profile</h1>
+            <p className="lead text-center">
+              Let's add some information to make your profile stand out
+            </p>
             <small className="d-block pb-3">* = required fields</small>
             <form onSubmit={onSubmit}>
               <TextAreaFieldGroup
@@ -226,4 +225,4 @@ const EditProfile = () => {
   );
 };
 
-export default EditProfile;
+export default CreateProfile;

@@ -12,8 +12,11 @@ import Navbar from "./components/layout/Navbar";
 import Landing from "./components/layout/Landing";
 import Footer from "./components/layout/Footer";
 import Login from "./components/auth/Login";
-import CreateProfile from "./components/common/create-profile/CreateProfile";
-import EditProfile from "./components/common/edit-profile/EditProfile"
+import CreateProfile from "./components/create-profile/CreateProfile";
+import EditProfile from "./components/edit-profile/EditProfile";
+import AddExperience from "./components/add-credentials/AddExperience";
+import AddEducation from "./components/add-credentials/AddEducation";
+
 import "./App.css";
 import Dashboard from "./components/dashboard/Dashboard";
 import { clearCurrentProfile } from "./actions/profileActions";
@@ -89,6 +92,29 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route
+              exact
+              path="/add-experience"
+              element={
+                <PrivateRoute>
+                  <div className="container">
+                    <AddExperience />
+                  </div>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              exact
+              path="/add-education"
+              element={
+                <PrivateRoute>
+                  <div className="container">
+                    <AddEducation />
+                  </div>
+                </PrivateRoute>
+              }
+            />
+
             <Route
               exact
               path="/register"

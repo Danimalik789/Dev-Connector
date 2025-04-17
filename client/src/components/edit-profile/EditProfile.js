@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { createProfile } from "../../../actions/profileActions";
+import { createProfile, getCurrentProfile } from "../../actions/profileActions";
+import isEmpty from "../../validation/is-empty";
 
-import TextFieldGroup from "../../common/TextFieldGroup";
-import TextAreaFieldGroup from "../../common/TextAreaFieldGroup";
-import InputGroup from "../../common/InputGroup";
-import SelectListGroup from "../../common/SelectListGroup";
+import TextFieldGroup from "../common/TextFieldGroup";
+import TextAreaFieldGroup from "../common/TextAreaFieldGroup";
+import InputGroup from "../common/InputGroup";
+import SelectListGroup from "../common/SelectListGroup";
 
-const CreateProfile = () => {
+const EditProfile = () => {
   const [formData, setFormData] = useState({
     displaySocialInputs: false,
     handle: "",
@@ -33,6 +34,11 @@ const CreateProfile = () => {
   const navigate = useNavigate();
 
   const reduxErrors = useSelector((state) => state.errors);
+  const profile = useSelector((state) => state.profile.profile);
+
+  useEffect(() => {
+    dispatch(getCurrentProfile());
+  }, [dispatch]);
 
   useEffect(() => {
     if (reduxErrors) {
@@ -40,9 +46,29 @@ const CreateProfile = () => {
     }
   }, [reduxErrors]);
 
-  const onChange = (e) => {
+  useEffect(() => {
+    if (profile) {
+      setFormData((prevData) => ({
+        ...prevData,
+        handle: !isEmpty(profile.handle) ? profile.handle : "",
+        company: !isEmpty(profile.company) ? profile.company : "",
+        website: !isEmpty(profile.website) ? profile.website : "",
+        location: !isEmpty(profile.location) ? profile.location : "",
+        status: !isEmpty(profile.status) ? profile.status : "",
+        skills: Array.isArray(profile.skills) ? profile.skills.join(",") : "",
+        githubusername: !isEmpty(profile.githubusername) ? profile.githubusername : "",
+        bio: !isEmpty(profile.bio) ? profile.bio : "",
+        twitter: !isEmpty(profile.social?.twitter) ? profile.social.twitter : "",
+        facebook: !isEmpty(profile.social?.facebook) ? profile.social.facebook : "",
+        youtube: !isEmpty(profile.social?.youtube) ? profile.social.youtube : "",
+        linkedin: !isEmpty(profile.social?.linkedin) ? profile.social.linkedin : "",
+        instagram: !isEmpty(profile.social?.instagram) ? profile.social.instagram : "",
+      }));
+    }
+  }, [profile]);
+
+  const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -61,72 +87,14 @@ const CreateProfile = () => {
     { label: "Other", value: "Other" },
   ];
 
-  let socialInputs;
-
-  if (displaySocialInputs) {
-    socialInputs = (
-      <>
-        <div>
-          <InputGroup
-            placeholder="Twitter Profile URL"
-            name="twitter"
-            icon="fab fa-twitter m-2"
-            value={formData.twitter}
-            onChange={onChange}
-            error={errors.twitter}
-          />
-        </div>
-        <div>
-          <InputGroup
-            placeholder="Facebook Profile URL"
-            name="facebook"
-            icon="fab fa-facebook m-2"
-            value={formData.facebook}
-            onChange={onChange}
-            error={errors.facebook}
-          />
-        </div>
-        <div>
-          <InputGroup
-            placeholder="Youtube Profile URL"
-            name="youtube"
-            icon="fab fa-youtube m-2"
-            value={formData.youtube}
-            onChange={onChange}
-            error={errors.youtube}
-          />
-        </div>
-        <div>
-          <InputGroup
-            placeholder="Linkedin Profile URL"
-            name="linkedin"
-            icon="fab fa-linkedin m-2"
-            value={formData.linkedin}
-            onChange={onChange}
-            error={errors.linkedin}
-          />
-        </div>
-        <div>
-          <InputGroup
-            placeholder="Instagram Profile URL"
-            name="instagram"
-            icon="fab fa-instagram m-2"
-            value={formData.instagram}
-            onChange={onChange}
-            error={errors.instagram}
-          />
-        </div>
-      </>
-    );
-  }
   return (
-    <div className="create-profile">
+    <div className="edit-profile">
       <div className="container">
         <div className="row">
           <div className="col-md-8 m-auto">
-            <h1 className="display-4 text-center">Create Your Profile</h1>
+            <h1 className="display-4 text-center">Edit Your Profile</h1>
             <p className="lead text-center">
-              Let's add some information to make your profile stand out
+              Update your profile information below
             </p>
             <small className="d-block pb-3">* = required fields</small>
             <form onSubmit={onSubmit}>
@@ -139,7 +107,6 @@ const CreateProfile = () => {
                 info="A unique handle for your profile URL. Your full name, company name, nickname"
               />
               <SelectListGroup
-                placeholder="* Status"
                 name="status"
                 value={formData.status}
                 onChange={onChange}
@@ -177,8 +144,7 @@ const CreateProfile = () => {
                 value={formData.skills}
                 onChange={onChange}
                 error={errors.skills}
-                info="Please use comma separated values (eg.
-                    HTML,CSS,JavaScript,PHP"
+                info="Use comma separated values (e.g. HTML,CSS,JavaScript)"
               />
               <TextFieldGroup
                 placeholder="Github Username"
@@ -186,7 +152,7 @@ const CreateProfile = () => {
                 value={formData.githubusername}
                 onChange={onChange}
                 error={errors.githubusername}
-                info="If you want your latest repos and a Github link, include your username"
+                info="Include your GitHub username to display your repos"
               />
               <TextAreaFieldGroup
                 placeholder="Short Bio"
@@ -196,9 +162,10 @@ const CreateProfile = () => {
                 error={errors.bio}
                 info="Tell us a little about yourself"
               />
+
               <div className="mb-3">
                 <button
-                type="button"
+                  type="button"
                   onClick={() =>
                     setFormData((prev) => ({
                       ...prev,
@@ -207,14 +174,59 @@ const CreateProfile = () => {
                   }
                   className="btn-btn-light"
                 >
-                  Add Social Networks Link
+                  Edit Social Network Links
                 </button>
                 <span className="text-muted">Optional</span>
               </div>
-              {socialInputs}
+
+              {displaySocialInputs && (
+                <>
+                  <InputGroup
+                    placeholder="Twitter Profile URL"
+                    name="twitter"
+                    icon="fab fa-twitter m-2"
+                    value={formData.twitter}
+                    onChange={onChange}
+                    error={errors.twitter}
+                  />
+                  <InputGroup
+                    placeholder="Facebook Profile URL"
+                    name="facebook"
+                    icon="fab fa-facebook m-2"
+                    value={formData.facebook}
+                    onChange={onChange}
+                    error={errors.facebook}
+                  />
+                  <InputGroup
+                    placeholder="Youtube Profile URL"
+                    name="youtube"
+                    icon="fab fa-youtube m-2"
+                    value={formData.youtube}
+                    onChange={onChange}
+                    error={errors.youtube}
+                  />
+                  <InputGroup
+                    placeholder="Linkedin Profile URL"
+                    name="linkedin"
+                    icon="fab fa-linkedin m-2"
+                    value={formData.linkedin}
+                    onChange={onChange}
+                    error={errors.linkedin}
+                  />
+                  <InputGroup
+                    placeholder="Instagram Profile URL"
+                    name="instagram"
+                    icon="fab fa-instagram m-2"
+                    value={formData.instagram}
+                    onChange={onChange}
+                    error={errors.instagram}
+                  />
+                </>
+              )}
+
               <input
                 type="submit"
-                value="Submit"
+                value="Save Changes"
                 className="btn btn-info btn-block mt-4"
               />
             </form>
@@ -225,4 +237,4 @@ const CreateProfile = () => {
   );
 };
 
-export default CreateProfile;
+export default EditProfile;
