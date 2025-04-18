@@ -16,6 +16,8 @@ import CreateProfile from "./components/create-profile/CreateProfile";
 import EditProfile from "./components/edit-profile/EditProfile";
 import AddExperience from "./components/add-credentials/AddExperience";
 import AddEducation from "./components/add-credentials/AddEducation";
+import Profiles from "./components/profiles/Profiles";
+
 
 import "./App.css";
 import Dashboard from "./components/dashboard/Dashboard";
@@ -56,6 +58,15 @@ function App() {
               element={
                 <div className="container">
                   <Login />
+                </div>
+              }
+            />
+            <Route
+              exact
+              path="/profiles"
+              element={
+                <div className="container">
+                  <Profiles />
                 </div>
               }
             />
