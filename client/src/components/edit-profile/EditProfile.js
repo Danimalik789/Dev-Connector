@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { createProfile, getCurrentProfile } from "../../actions/profileActions";
 import isEmpty from "../../validation/is-empty";
+import { Link } from "react-router-dom";
 
 import TextFieldGroup from "../common/TextFieldGroup";
 import TextAreaFieldGroup from "../common/TextAreaFieldGroup";
@@ -92,6 +93,9 @@ const EditProfile = () => {
       <div className="container">
         <div className="row">
           <div className="col-md-8 m-auto">
+          <Link to="/dashboard" className="btn btn-light">
+              Go Back
+            </Link>
             <h1 className="display-4 text-center">Edit Your Profile</h1>
             <p className="lead text-center">
               Update your profile information below

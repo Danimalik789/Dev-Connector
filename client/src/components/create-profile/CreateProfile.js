@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { createProfile } from "../../actions/profileActions";
-
+import { Link } from "react-router-dom";
 import TextFieldGroup from "../common/TextFieldGroup";
 import TextAreaFieldGroup from "../common/TextAreaFieldGroup";
 import InputGroup from "../common/InputGroup";
@@ -124,6 +124,9 @@ const CreateProfile = () => {
       <div className="container">
         <div className="row">
           <div className="col-md-8 m-auto">
+            <Link to="/dashboard" className="btn btn-light">
+              Go Back
+            </Link>
             <h1 className="display-4 text-center">Create Your Profile</h1>
             <p className="lead text-center">
               Let's add some information to make your profile stand out
@@ -198,7 +201,7 @@ const CreateProfile = () => {
               />
               <div className="mb-3">
                 <button
-                type="button"
+                  type="button"
                   onClick={() =>
                     setFormData((prev) => ({
                       ...prev,
