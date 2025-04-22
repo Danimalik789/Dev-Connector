@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Spinner from "../common/Spinner";
 
 import { getProfileByHandle } from "../../actions/profileActions";
@@ -8,12 +8,11 @@ import { getProfileByHandle } from "../../actions/profileActions";
 import ProfileHeader from "./ProfileHeader";
 import ProfileAbout from "./ProfileAbout";
 import ProfileGitHub from "./ProfileGitHub";
-import ProfileCreds from "./ProfileCreds";
+import ProfileCredentials from "./ProfileCredentials";
 
 const Profile = () => {
   const dispatch = useDispatch();
   const { handle } = useParams();
-  const navigate = useNavigate();
 
   const profile = useSelector((state) => state.profile);
   const { loading, profile: profileData } = profile;
@@ -40,10 +39,10 @@ const Profile = () => {
             </Link>
           </div>
           <div className="col-md-6" />
-        </div>
+        </div>  
         <ProfileHeader profile={profileData} />
         <ProfileAbout profile={profileData}/>
-        <ProfileCreds />
+        <ProfileCredentials education ={profileData.education} experience ={profileData.experience} />
         <ProfileGitHub />
       </div>
     );

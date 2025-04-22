@@ -4,9 +4,18 @@ import isEmpty from '../../validation/is-empty';
 const ProfileAbout = ({ profile }) => {
   const firstName = profile.user.name.trim().split(' ')[0] || "User";
 
-  const skills = Array.isArray(profile.skills)
+// ✅ Normalize profile.skills to always be an array
+const skills = Array.isArray(profile.skills)
   ? profile.skills
   : profile.skills.split(' ').map(skill => skill.trim());
+
+// ✅ Render the skills with a checkmark icon
+const skillItems = skills.map((skill, index) => (
+  <div key={index} className="p-3">
+    <i className="fa fa-check" /> {skill}
+  </div>
+));
+
 
 
   return (
@@ -24,7 +33,7 @@ const ProfileAbout = ({ profile }) => {
           <hr />
           <h3 className="text-center text-info">Skill Set</h3>
           <div className="row">
-            <div className="d-flex flex-wrap justify-content-center align-items-center">{skills}</div>
+            <div className="d-flex flex-wrap justify-content-center align-items-center">{skillItems}</div>
           </div>
         </div>
       </div>
