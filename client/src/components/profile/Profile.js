@@ -25,6 +25,8 @@ const Profile = () => {
     }
   }, [dispatch, handle]);
 
+
+
   if (profileData === null || loading) {
     profileContent = <Spinner />;
   } else if (profileData === null && !loading) {
@@ -39,11 +41,16 @@ const Profile = () => {
             </Link>
           </div>
           <div className="col-md-6" />
-        </div>  
+        </div>
         <ProfileHeader profile={profileData} />
-        <ProfileAbout profile={profileData}/>
-        <ProfileCredentials education ={profileData.education} experience ={profileData.experience} />
-        <ProfileGitHub />
+        <ProfileAbout profile={profileData} />
+        <ProfileCredentials
+          education={profileData.education}
+          experience={profileData.experience}
+        />
+        {profileData.githubusername ? (
+          <ProfileGitHub username={profileData.githubusername} />
+        ) : null}
       </div>
     );
   }
