@@ -19,6 +19,7 @@ import AddEducation from "./components/add-credentials/AddEducation";
 import Profiles from "./components/profiles/Profiles";
 import Profile from "./components/profile/Profile";
 import Posts from "./components/posts/Posts";
+import Post from "./components/post/Post";
 
 import "./App.css";
 import Dashboard from "./components/dashboard/Dashboard";
@@ -156,7 +157,18 @@ function App() {
                 </div>
               }
             />
-           
+
+            <Route
+              exact
+              path="/post/:id"
+              element={
+                <PrivateRoute>
+                  <div className="container">
+                    <Post />
+                  </div>
+                </PrivateRoute>
+              }
+            />
           </Routes>
           <Footer />
         </div>

@@ -24,7 +24,7 @@ router.get("/", (req, res) => {
   Post.find()
     .sort({ date: -1 })
     .then((posts) => res.json(posts))
-    .catch((err) => res.status(404));
+    .catch((err) => res.status(404).json({nopostsfound: 'No post found'}));
 });
 
 //@route   GET  api/posts/:id
@@ -75,14 +75,14 @@ router.delete(
       Post.findById(req.params.id)
         .then((post) => {
           //Check for post owner
-          if (post.user.toString !== req.user.id) {
+          if (post.user.toString() !== req.user.id) {
             return res
               .status(401)
-              .json({ unauthorized: " User not authorized " });
+              .json({ notauthorized: " User not authorized " });
           }
 
           //Delete
-          post.remove().then(() => res.json({ success: true }));
+          post.deleteOne().then(() => res.json({ success: true }));
         })
         .catch((err) =>
           res.status(404).json({ postnotfound: "No post found" })
@@ -211,7 +211,7 @@ router.delete('/comment/:id/:comment_id', passport.authenticate('jwt', {session:
     .indexOf(req.params.comment_id)
 
     // Splice comment out of array
-    post.comments.splice(removeIndex)
+    post.comments.splice(removeIndex, 1)
 
     // Save
     post.save().then(post => res.json(post))
