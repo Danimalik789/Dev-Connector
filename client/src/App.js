@@ -169,6 +169,7 @@ function App() {
                 </PrivateRoute>
               }
             />
+
           </Routes>
           <Footer />
         </div>
