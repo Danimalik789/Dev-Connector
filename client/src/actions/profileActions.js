@@ -50,8 +50,8 @@ export const getProfileByHandle = (handle) => (dispatch) => {
 // Create Profile
 export const createProfile = (profileData, navigate) => (dispatch) => {
   axios
-    .post("api/profile", profileData)
-    .then(() => navigate("/dashboard"))
+    .post('api/profile', profileData)
+    .then((res) => navigate("/dashboard"))
     .catch((err) =>
       dispatch({
         type: GET_ERRORS,

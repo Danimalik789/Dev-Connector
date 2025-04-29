@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { createProfile, getCurrentProfile } from "../../actions/profileActions";
-import isEmpty from "../../validation/is-empty";
-import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
 import TextFieldGroup from "../common/TextFieldGroup";
 import TextAreaFieldGroup from "../common/TextAreaFieldGroup";
 import InputGroup from "../common/InputGroup";
 import SelectListGroup from "../common/SelectListGroup";
 
-const EditProfile = () => {
+import { createProfile, getCurrentProfile } from "../../actions/profileActions";
+import isEmpty from "../../validation/is-empty";
+
+const CreateProfile = () => {
   const [formData, setFormData] = useState({
-    displaySocialInputs: false,
     handle: "",
     company: "",
     website: "",
@@ -23,50 +23,58 @@ const EditProfile = () => {
     bio: "",
     twitter: "",
     facebook: "",
-    youtube: "",
     linkedin: "",
+    youtube: "",
     instagram: "",
   });
 
-  const [errors, setErrors] = useState({});
-  const { displaySocialInputs } = formData;
+  const [displaySocialInputs, setDisplaySocialInputs] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const reduxErrors = useSelector((state) => state.errors);
-  const profile = useSelector((state) => state.profile.profile);
+  const profileState = useSelector((state) => state.profile);
+  const errorState = useSelector((state) => state.errors);
+
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     dispatch(getCurrentProfile());
   }, [dispatch]);
 
   useEffect(() => {
-    if (reduxErrors) {
-      setErrors(reduxErrors);
+    if (errorState) {
+      setErrors(errorState);
     }
-  }, [reduxErrors]);
 
-  useEffect(() => {
-    if (profile) {
-      setFormData((prevData) => ({
-        ...prevData,
-        handle: !isEmpty(profile.handle) ? profile.handle : "",
-        company: !isEmpty(profile.company) ? profile.company : "",
-        website: !isEmpty(profile.website) ? profile.website : "",
-        location: !isEmpty(profile.location) ? profile.location : "",
-        status: !isEmpty(profile.status) ? profile.status : "",
-        skills: Array.isArray(profile.skills) ? profile.skills.join(",") : "",
-        githubusername: !isEmpty(profile.githubusername) ? profile.githubusername : "",
-        bio: !isEmpty(profile.bio) ? profile.bio : "",
-        twitter: !isEmpty(profile.social?.twitter) ? profile.social.twitter : "",
-        facebook: !isEmpty(profile.social?.facebook) ? profile.social.facebook : "",
-        youtube: !isEmpty(profile.social?.youtube) ? profile.social.youtube : "",
-        linkedin: !isEmpty(profile.social?.linkedin) ? profile.social.linkedin : "",
-        instagram: !isEmpty(profile.social?.instagram) ? profile.social.instagram : "",
-      }));
+    if (profileState.profile) {
+      const profile = profileState.profile;
+
+      // Convert skills array to CSV
+      const skillsCSV = Array.isArray(profile.skills)
+        ? profile.skills.join(",")
+        : profile.skills || "";
+
+      // Fallbacks for undefined fields
+      const social = !isEmpty(profile.social) ? profile.social : {};
+
+      setFormData({
+        handle: profile.handle || "",
+        company: profile.company || "",
+        website: profile.website || "",
+        location: profile.location || "",
+        status: profile.status || "",
+        skills: skillsCSV,
+        githubusername: profile.githubusername || "",
+        bio: profile.bio || "",
+        twitter: social.twitter || "",
+        facebook: social.facebook || "",
+        linkedin: social.linkedin || "",
+        youtube: social.youtube || "",
+        instagram: social.instagram || "",
+      });
     }
-  }, [profile]);
+  }, [profileState.profile, errorState]);
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -75,6 +83,22 @@ const EditProfile = () => {
     e.preventDefault();
     dispatch(createProfile(formData, navigate));
   };
+
+  const {
+    handle,
+    company,
+    website,
+    location,
+    status,
+    skills,
+    githubusername,
+    bio,
+    twitter,
+    facebook,
+    linkedin,
+    youtube,
+    instagram,
+  } = formData;
 
   const options = [
     { label: "* Select Professional Status", value: 0 },
@@ -88,31 +112,74 @@ const EditProfile = () => {
     { label: "Other", value: "Other" },
   ];
 
+  const socialInputs = displaySocialInputs && (
+    <>
+      <InputGroup
+        placeholder="Twitter Profile URL"
+        name="twitter"
+        icon="fab fa-twitter"
+        value={twitter}
+        onChange={onChange}
+        error={errors.twitter}
+      />
+      <InputGroup
+        placeholder="Facebook Page URL"
+        name="facebook"
+        icon="fab fa-facebook"
+        value={facebook}
+        onChange={onChange}
+        error={errors.facebook}
+      />
+      <InputGroup
+        placeholder="Linkedin Profile URL"
+        name="linkedin"
+        icon="fab fa-linkedin"
+        value={linkedin}
+        onChange={onChange}
+        error={errors.linkedin}
+      />
+      <InputGroup
+        placeholder="YouTube Channel URL"
+        name="youtube"
+        icon="fab fa-youtube"
+        value={youtube}
+        onChange={onChange}
+        error={errors.youtube}
+      />
+      <InputGroup
+        placeholder="Instagram Page URL"
+        name="instagram"
+        icon="fab fa-instagram"
+        value={instagram}
+        onChange={onChange}
+        error={errors.instagram}
+      />
+    </>
+  );
+
   return (
-    <div className="edit-profile">
+    <div className="create-profile">
       <div className="container">
         <div className="row">
           <div className="col-md-8 m-auto">
-          <Link to="/dashboard" className="btn btn-light">
+            <Link to="/dashboard" className="btn btn-light">
               Go Back
             </Link>
-            <h1 className="display-4 text-center">Edit Your Profile</h1>
-            <p className="lead text-center">
-              Update your profile information below
-            </p>
+            <h1 className="display-4 text-center">Edit Profile</h1>
             <small className="d-block pb-3">* = required fields</small>
             <form onSubmit={onSubmit}>
-              <TextAreaFieldGroup
+              <TextFieldGroup
                 placeholder="* Profile Handle"
                 name="handle"
-                value={formData.handle}
+                value={handle}
                 onChange={onChange}
                 error={errors.handle}
                 info="A unique handle for your profile URL. Your full name, company name, nickname"
               />
               <SelectListGroup
+                placeholder="Status"
                 name="status"
-                value={formData.status}
+                value={status}
                 onChange={onChange}
                 options={options}
                 error={errors.status}
@@ -121,7 +188,7 @@ const EditProfile = () => {
               <TextFieldGroup
                 placeholder="Company"
                 name="company"
-                value={formData.company}
+                value={company}
                 onChange={onChange}
                 error={errors.company}
                 info="Could be your own company or one you work for"
@@ -129,7 +196,7 @@ const EditProfile = () => {
               <TextFieldGroup
                 placeholder="Website"
                 name="website"
-                value={formData.website}
+                value={website}
                 onChange={onChange}
                 error={errors.website}
                 info="Could be your own website or a company one"
@@ -137,7 +204,7 @@ const EditProfile = () => {
               <TextFieldGroup
                 placeholder="Location"
                 name="location"
-                value={formData.location}
+                value={location}
                 onChange={onChange}
                 error={errors.location}
                 info="City or city & state suggested (eg. Boston, MA)"
@@ -145,23 +212,23 @@ const EditProfile = () => {
               <TextFieldGroup
                 placeholder="* Skills"
                 name="skills"
-                value={formData.skills}
+                value={skills}
                 onChange={onChange}
                 error={errors.skills}
-                info="Use comma separated values (e.g. HTML,CSS,JavaScript)"
+                info="Please use comma separated values (eg. HTML,CSS,JavaScript,PHP)"
               />
               <TextFieldGroup
                 placeholder="Github Username"
                 name="githubusername"
-                value={formData.githubusername}
+                value={githubusername}
                 onChange={onChange}
                 error={errors.githubusername}
-                info="Include your GitHub username to display your repos"
+                info="If you want your latest repos and a Github link, include your username"
               />
               <TextAreaFieldGroup
                 placeholder="Short Bio"
                 name="bio"
-                value={formData.bio}
+                value={bio}
                 onChange={onChange}
                 error={errors.bio}
                 info="Tell us a little about yourself"
@@ -170,67 +237,17 @@ const EditProfile = () => {
               <div className="mb-3">
                 <button
                   type="button"
-                  onClick={() =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      displaySocialInputs: !prev.displaySocialInputs,
-                    }))
-                  }
-                  className="btn-btn-light"
+                  onClick={() => setDisplaySocialInputs(!displaySocialInputs)}
+                  className="btn btn-light"
                 >
-                  Edit Social Network Links
+                  Add Social Network Links
                 </button>
                 <span className="text-muted">Optional</span>
               </div>
-
-              {displaySocialInputs && (
-                <>
-                  <InputGroup
-                    placeholder="Twitter Profile URL"
-                    name="twitter"
-                    icon="fab fa-twitter m-2"
-                    value={formData.twitter}
-                    onChange={onChange}
-                    error={errors.twitter}
-                  />
-                  <InputGroup
-                    placeholder="Facebook Profile URL"
-                    name="facebook"
-                    icon="fab fa-facebook m-2"
-                    value={formData.facebook}
-                    onChange={onChange}
-                    error={errors.facebook}
-                  />
-                  <InputGroup
-                    placeholder="Youtube Profile URL"
-                    name="youtube"
-                    icon="fab fa-youtube m-2"
-                    value={formData.youtube}
-                    onChange={onChange}
-                    error={errors.youtube}
-                  />
-                  <InputGroup
-                    placeholder="Linkedin Profile URL"
-                    name="linkedin"
-                    icon="fab fa-linkedin m-2"
-                    value={formData.linkedin}
-                    onChange={onChange}
-                    error={errors.linkedin}
-                  />
-                  <InputGroup
-                    placeholder="Instagram Profile URL"
-                    name="instagram"
-                    icon="fab fa-instagram m-2"
-                    value={formData.instagram}
-                    onChange={onChange}
-                    error={errors.instagram}
-                  />
-                </>
-              )}
-
+              {socialInputs}
               <input
                 type="submit"
-                value="Save Changes"
+                value="Submit"
                 className="btn btn-info btn-block mt-4"
               />
             </form>
@@ -241,4 +258,9 @@ const EditProfile = () => {
   );
 };
 
-export default EditProfile;
+CreateProfile.propTypes = {
+  createProfile: PropTypes.func,
+  getCurrentProfile: PropTypes.func,
+};
+
+export default CreateProfile;
