@@ -128,7 +128,7 @@ router.post(
     if (req.body.twitter) profileFields.social.twitter = req.body.twitter;
     if (req.body.linkedin) profileFields.social.linkedin = req.body.linkedin;
 
-    Profile.findOneAndReplace({ user: req.user.id }).then((profile) => {
+    Profile.findOne({ user: req.user.id }).then((profile) => {
       if (profile) {
         //Update
         Profile.findOneAndUpdate(
