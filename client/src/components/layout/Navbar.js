@@ -13,7 +13,7 @@ const Navbar = () => {
 
   const onLogoutClick = (e) => {
     e.preventDefault();
-    dispatch(clearCurrentProfile());  
+    dispatch(clearCurrentProfile());
     dispatch(logoutUser());
     navigate("/login");
   };
@@ -82,6 +82,13 @@ const Navbar = () => {
                 Developers
               </Link>
             </li>
+            {user && user.isAdmin && (
+              <li className="nav-item">
+                <Link className="nav-link" to="/admin">
+                  Admin Dashboard
+                </Link>
+              </li>
+            )}
           </ul>
           {isAuthenticated ? authLinks : guestLinks}
         </div>

@@ -78,11 +78,24 @@ router.post("/login", (req, res) => {
       errors.email = 'User not found'
       return res.status(404).json(errors);
     }
+
+    // Check if account is disabled
+    if (!user.isActive) {
+      errors.email = 'Your account has been disabled. Please contact administrator.'
+      return res.status(403).json(errors);
+    }
+
     //Check for password
     bcrypt.compare(password, user.password).then((isMatch) => {
       if (isMatch) {
         //User Matched
-        const payload = { id: user.id, name: user.name, avatar: user.avatar }; //Create JWT payload
+        const payload = { 
+          id: user.id, 
+          name: user.name, 
+          avatar: user.avatar,
+          isAdmin: user.isAdmin,
+          isActive: user.isActive
+        }; //Create JWT payload
 
         //Sign Token
         jwt.sign(
@@ -115,6 +128,8 @@ router.get(
       id: req.user.id,
       email: req.user.email,
       name: req.user.name,
+      isAdmin: req.user.isAdmin,
+      isActive: req.user.isActive
     });
   }
 );
