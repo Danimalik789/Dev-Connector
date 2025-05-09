@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getAllUsers, toggleUserStatus } from "../../actions/adminActions";
@@ -6,6 +6,8 @@ import { getAllUsers, toggleUserStatus } from "../../actions/adminActions";
 const AdminDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
 
   // Get state from redux store
   const user = useSelector((state) => state.auth.user);
@@ -28,8 +30,53 @@ const AdminDashboard = () => {
       </div>
     );
   }
+
   const handleToggleStatus = (userId) => {
     dispatch(toggleUserStatus(userId));
+  };
+
+  const handleSelectUser = (userId) => {
+    if (selectedUsers.includes(userId)) {
+      setSelectedUsers(selectedUsers.filter((id) => id !== userId));
+      setSelectAll(false);
+    } else {
+      setSelectedUsers([...selectedUsers, userId]);
+      if (selectedUsers.length + 1 === users.length) {
+        setSelectAll(true);
+      }
+    }
+  };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedUsers(users.map((user) => user._id));
+      setSelectAll(true);
+    } else {
+      setSelectedUsers([]);
+      setSelectAll(false);
+    }
+  };
+
+  const handleEnableSelected = () => {
+    selectedUsers.forEach((userId) => {
+      const user = users.find((u) => u._id === userId);
+      if (user && !user.isActive) {
+        dispatch(toggleUserStatus(userId));
+      }
+    });
+    setSelectedUsers([]);
+    setSelectAll(false);
+  };
+
+  const handleDisableSelected = () => {
+    selectedUsers.forEach((userId) => {
+      const user = users.find((u) => u._id === userId);
+      if (user && user.isActive) {
+        dispatch(toggleUserStatus(userId));
+      }
+    });
+    setSelectedUsers([]);
+    setSelectAll(false);
   };
 
   return (
@@ -38,8 +85,24 @@ const AdminDashboard = () => {
       <div className="row">
         <div className="col-md-12">
           <div className="card">
-            <div className="card-header">
+            <div className="card-header d-flex justify-content-between align-items-center">
               <h4>User Management</h4>
+              <div>
+                <button
+                  className="btn btn-success me-2"
+                  onClick={handleEnableSelected}
+                  disabled={selectedUsers.length === 0}
+                >
+                  Enable Selected
+                </button>
+                <button
+                  className="btn btn-danger"
+                  onClick={handleDisableSelected}
+                  disabled={selectedUsers.length === 0}
+                >
+                  Disable Selected
+                </button>
+              </div>
             </div>
             <div className="card-body">
               {loading ? (
@@ -48,6 +111,14 @@ const AdminDashboard = () => {
                 <table className="table">
                   <thead>
                     <tr>
+                      <th>
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          checked={selectAll}
+                          onChange={handleSelectAll}
+                        />
+                      </th>
                       <th>Name</th>
                       <th>Email</th>
                       <th>Status</th>
@@ -56,7 +127,15 @@ const AdminDashboard = () => {
                   </thead>
                   <tbody>
                     {users.map((user) => (
-                      <tr key={user._id} >
+                      <tr key={user._id}>
+                        <td>
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            checked={selectedUsers.includes(user._id)}
+                            onChange={() => handleSelectUser(user._id)}
+                          />
+                        </td>
                         <td className="fw-bold">{user.name}</td>
                         <td>{user.email}</td>
                         <td>

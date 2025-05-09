@@ -24,8 +24,7 @@ import Post from "./components/post/Post";
 import "./App.css";
 import Dashboard from "./components/dashboard/Dashboard";
 import { clearCurrentProfile } from "./actions/profileActions";
-import AdminDashboard from './components/admin/AdminDashboard'
-import { Link } from "react-router-dom";
+import AdminDashboard from "./components/admin/AdminDashboard";
 
 // Check for token
 if (localStorage.jwtToken) {
@@ -58,7 +57,7 @@ function App() {
             <Route exact path="/" element={<Landing />} />
             <Route
               exact
-              path="/admin"
+              path="/admin-dashboard"
               element={
                 <PrivateRoute>
                   <div className="container">
@@ -182,7 +181,6 @@ function App() {
                 </PrivateRoute>
               }
             />
-
           </Routes>
           <Footer />
         </div>

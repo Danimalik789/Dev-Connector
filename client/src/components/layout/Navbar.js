@@ -84,7 +84,7 @@ const Navbar = () => {
             </li>
             {user && user.isAdmin && (
               <li className="nav-item">
-                <Link className="nav-link" to="/admin">
+                <Link className="nav-link" to="/admin-dashboard">
                   Admin Dashboard
                 </Link>
               </li>

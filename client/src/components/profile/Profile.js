@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Spinner from "../common/Spinner";
 
 import { getProfileByHandle } from "../../actions/profileActions";
@@ -12,6 +12,7 @@ import ProfileCredentials from "./ProfileCredentials";
 
 const Profile = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { handle } = useParams();
 
   const profile = useSelector((state) => state.profile);
@@ -25,12 +26,23 @@ const Profile = () => {
     }
   }, [dispatch, handle]);
 
-
-
-  if (profileData === null || loading) {
+  if (loading) {
     profileContent = <Spinner />;
-  } else if (profileData === null && !loading) {
-    profileContent = <div>Profile Not Found</div>;
+  } else if (!profileData) {
+    profileContent = (
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+            <div className="alert alert-danger">
+              Profile not found. The user may not exist or the profile handle may be incorrect.
+            </div>
+            <Link to="/profiles" className="btn btn-light mb-3">
+              Back To Profiles
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   } else {
     profileContent = (
       <div>
