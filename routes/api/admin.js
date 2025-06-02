@@ -38,6 +38,10 @@ router.put(
     isAdmin,
     async (req, res) => {
         try {
+            // Prevent admin from disabling their own account
+            if (req.params.id === req.user.id){
+                return res.status(403).json({error: "You can not disable your own admin account"})
+            }
             const user = await User.findById(req.params.id);
             if (!user) {
                 return res.status(404).json({ error: "User not found" });

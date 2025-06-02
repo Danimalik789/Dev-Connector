@@ -8,6 +8,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Get state from redux store
   const user = useSelector((state) => state.auth.user);
@@ -79,9 +80,28 @@ const AdminDashboard = () => {
     setSelectAll(false);
   };
 
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="container">
       <h1 className="display-4">Admin Dashboard</h1>
+
+      {/*Search Bar */}
+      <div className="row mb-4">
+        <div className="col-md-4">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search users by name or email...."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
       <div className="row">
         <div className="col-md-12">
           <div className="card">
@@ -126,7 +146,7 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {users.map((user) => (
+                    {filteredUsers.map((user) => (
                       <tr key={user._id}>
                         <td>
                           <input

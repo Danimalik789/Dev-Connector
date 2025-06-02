@@ -31,5 +31,6 @@ export const toggleUserStatus = (userId) => (dispatch) => {
   axios.put(`/api/admin/users/${userId}/status`).catch((err) => {
     // If the API call fails, refresh the users list to revert the change
     dispatch(getAllUsers());
+    
   });
 };
